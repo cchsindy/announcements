@@ -24,7 +24,7 @@
         if (this.item.days < 7) this.item.days++
       },
       remove() {
-        console.log('remove item', this.item.id)
+        this.$emit('removeItem', this.item.id)
       }
     },
     props: {
@@ -90,5 +90,7 @@
 }
 .user {
   display: block;
+  font-size: 0.8em;
+  font-style: italic;
 }
 </style>
