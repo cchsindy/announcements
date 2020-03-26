@@ -71,7 +71,7 @@ export default {
 body {
   background: #b5c2ab;
   margin: 0;
-  padding: 0;
+  padding: 0 0 4vh 0;
 }
 
 button {

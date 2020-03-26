@@ -33,8 +33,11 @@
         this.$emit('removeItem', this.item.id)
       },
       updateContent() {
+        // Hack fix to updating content
         this.item.content = this.$refs.content.innerText
         this.$emit('updateItem', this.item)
+        // Hack fix to content doubling
+        this.$refs.content.innerText = this.item.content
       }
     },
     props: {
