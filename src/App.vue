@@ -9,6 +9,7 @@
 <script>
 import Announcement from '@/components/Announcement'
 import * as firebase from 'firebase/app'
+import 'firebase/auth'
 import 'firebase/firestore'
 
 const config = {
@@ -21,6 +22,7 @@ const config = {
     appId: "1:945207168321:web:e42d0845df84c8c24e65c0"
   }
 firebase.initializeApp(config)
+const provider = new firebase.auth.GoogleAuthProvider()
 const db = firebase.firestore()
 
 
@@ -32,7 +34,8 @@ export default {
   data: () => {
     return {
       announcements: [],
-      user: 'brad'
+      user: null,
+      displayName: ''
     }
   },
   methods: {
@@ -40,6 +43,7 @@ export default {
       db.collection('announcements').add({
         content: '',
         days: 1,
+        display_name: this.displayName,
         user: this.user
       })
     },
@@ -50,15 +54,20 @@ export default {
       db.collection('announcements').doc(item.id).set({
         content: item.content,
         days: item.days,
+        display_name: this.displayName,
         user: item.user
       })
     }
   },
   mounted() {
-    db.collection('announcements').onSnapshot((snapshot) => {
-      this.announcements = []
-      snapshot.forEach((doc) => {
-        this.announcements.push({ id: doc.id, ...doc.data() })
+    firebase.auth().signInWithPopup(provider).then(result => {
+      this.user = result.user.uid
+      this.displayName = result.user.displayName
+      db.collection('announcements').onSnapshot(snapshot => {
+        this.announcements = []
+        snapshot.forEach(doc => {
+          this.announcements.push({ id: doc.id, ...doc.data() })
+        })
       })
     })
   }

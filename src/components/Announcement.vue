@@ -2,7 +2,7 @@
   <div class="item">
     <div><span v-if="owner" class="minus" @click="minus">-</span><span class="days">{{item.days}} {{days}}</span><span v-if="owner" class="plus" @click="plus">+</span></div>
     <div class="content" ref="content" :contenteditable="owner" @blur="updateContent">{{item.content}}</div>
-    <div><span v-if="owner" class="remove" @click="remove">X</span><span class="user">{{item.user}}</span></div>
+    <div><span v-if="owner" class="remove" @click="remove">X</span><span class="user">{{item.display_name}}</span></div>
   </div>
 </template>
 
@@ -24,7 +24,7 @@
         }
       },
       plus() {
-        if (this.item.days < 7) {
+        if (this.item.days < 5) {
           this.item.days++
           this.$emit('updateItem', this.item)
         }
