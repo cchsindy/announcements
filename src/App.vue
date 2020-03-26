@@ -1,8 +1,14 @@
 <template>
   <div id="app">
     <h1>Announcement Manager</h1>
-    <Announcement v-for="item in announcements" :key="item.id" :item="item" :user="user" @removeItem="remove" @updateItem="update" />
-    <button @click="add">Add Announcement</button>
+    <div v-if="user">
+      <Announcement v-for="item in announcements" :key="item.id" :item="item" :user="user" @removeItem="remove" @updateItem="update" />
+      <button @click="add">Add Announcement</button>
+    </div>
+    <div v-else>
+      <p>You must login to access this site.</p>
+      <button @click="google">Login with Google</button>
+    </div>
   </div>
 </template>
 
@@ -47,6 +53,9 @@ export default {
         user: this.user
       })
     },
+    google() {
+      firebase.auth().signInWithPopup(provider)
+    },
     remove(id) {
       db.collection('announcements').doc(id).delete()
     },
@@ -60,15 +69,17 @@ export default {
     }
   },
   mounted() {
-    firebase.auth().signInWithPopup(provider).then(result => {
-      this.user = result.user.uid
-      this.displayName = result.user.displayName
-      db.collection('announcements').onSnapshot(snapshot => {
-        this.announcements = []
-        snapshot.forEach(doc => {
-          this.announcements.push({ id: doc.id, ...doc.data() })
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        this.user = user.uid
+        this.displayName = user.displayName
+        db.collection('announcements').onSnapshot(snapshot => {
+          this.announcements = []
+          snapshot.forEach(doc => {
+            this.announcements.push({ id: doc.id, ...doc.data() })
+          })
         })
-      })
+      }
     })
   }
 }
