@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "target": "camp",
+    "target": "announcements",
     "public": "dist",
     "ignore": [
       "firebase.json",

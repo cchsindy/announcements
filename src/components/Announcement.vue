@@ -1,7 +1,7 @@
 <template>
   <div class="item">
     <div><span v-if="owner" class="minus" @click="minus">-</span><span class="days">{{item.days}} {{days}}</span><span v-if="owner" class="plus" @click="plus">+</span></div>
-    <div class="content" :contenteditable="owner">{{item.content}}</div>
+    <div class="content" ref="content" :contenteditable="owner" @blur="updateContent">{{item.content}}</div>
     <div><span v-if="owner" class="remove" @click="remove">X</span><span class="user">{{item.user}}</span></div>
   </div>
 </template>
@@ -18,13 +18,23 @@
     },
     methods: {
       minus() {
-        if (this.item.days > 1) this.item.days--
+        if (this.item.days > 1) {
+          this.item.days--
+          this.$emit('updateItem', this.item)
+        }
       },
       plus() {
-        if (this.item.days < 7) this.item.days++
+        if (this.item.days < 7) {
+          this.item.days++
+          this.$emit('updateItem', this.item)
+        }
       },
       remove() {
         this.$emit('removeItem', this.item.id)
+      },
+      updateContent() {
+        this.item.content = this.$refs.content.innerText
+        this.$emit('updateItem', this.item)
       }
     },
     props: {
@@ -35,6 +45,17 @@
       user: {
         type: String,
         required: true
+      }
+    },
+    watch: {
+      item: {
+        handler: function() {},
+        deep: true
+      }
+    },
+    mounted() {
+      if (this.item.content === '') {
+        this.$refs.content.focus()
       }
     }
   }
