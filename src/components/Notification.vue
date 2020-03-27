@@ -8,7 +8,7 @@
         @blur="updateStudent"
         @keyup="getMatches"
       >{{item.student}}</div>
-      <Matches :matches="matches" />
+      <Matches :matches="matches" @selection="selectedMatch" />
     </div>
     <div>to see {{item.faculty}}</div>
     <div>
@@ -47,12 +47,17 @@ export default {
         );
       }
     },
+    selectedMatch(student) {
+      this.$refs.student.innerText = student;
+      this.updateStudent();
+    },
     updateStudent() {
       // Hack fix to updating content
       this.item.student = this.$refs.student.innerText;
       this.$emit("updateItem", this.item);
       // Hack fix to content doubling
       this.$refs.student.innerText = this.item.student;
+      this.matches = [];
     }
   },
   props: {

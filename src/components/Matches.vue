@@ -1,11 +1,16 @@
 <template>
   <div>
-    <div class="match" v-for="m in matches" :key="m">{{m}}</div>
+    <div class="match" @click="chooseMatch" v-for="m in matches" :key="m">{{m}}</div>
   </div>
 </template>
 
 <script>
 export default {
+  methods: {
+    chooseMatch(e) {
+      this.$emit("selection", e.target.innerText);
+    }
+  },
   props: {
     matches: {
       type: Array,
