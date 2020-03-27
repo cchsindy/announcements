@@ -93,12 +93,13 @@ export default {
   user-select: none;
 }
 .item {
+  align-items: center;
   background: #eeceab;
   border: 1px solid #888888;
   border-radius: 1vw;
   display: flex;
   justify-content: space-between;
-  margin: 2vw;
+  margin: 1vw;
   padding: 1vw;
 }
 .minus,

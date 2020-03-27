@@ -9,14 +9,23 @@
           :key="item.id"
           :item="item"
           :user="user"
-          @removeItem="remove"
-          @updateItem="update"
+          @removeItem="removeAnnouncement"
+          @updateItem="updateAnnouncement"
         />
-        <button @click="add">Add Announcement</button>
+        <button @click="addAnnouncement">Add Announcement</button>
       </div>
       <div class="notifications">
         <h2>Notifications</h2>
-        <Notification />
+        <Notification
+          v-for="item in notifications"
+          :key="item.id"
+          :item="item"
+          :students="students"
+          :user="user"
+          @removeItem="removeNotification"
+          @updateItem="updateNotification"
+        />
+        <button @click="addNotification">Add Notification</button>
       </div>
     </div>
     <div v-else>
@@ -32,6 +41,7 @@ import Notification from "@/components/Notification";
 import * as firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
+import "firebase/functions";
 
 const config = {
   apiKey: "AIzaSyCg_FVHdzP3kvRAyrnpE2bJUsQfMRUgFW4",
@@ -45,6 +55,7 @@ const config = {
 firebase.initializeApp(config);
 const provider = new firebase.auth.GoogleAuthProvider();
 const db = firebase.firestore();
+const fn = firebase.functions().httpsCallable("skyapi");
 
 export default {
   name: "App",
@@ -55,12 +66,16 @@ export default {
   data: () => {
     return {
       announcements: [],
+      notifications: [],
+      students: [],
       user: null,
-      displayName: ""
+      displayName: "",
+      title: "",
+      last: ""
     };
   },
   methods: {
-    add() {
+    addAnnouncement() {
       db.collection("announcements").add({
         content: "",
         days: 1,
@@ -68,20 +83,43 @@ export default {
         user: this.user
       });
     },
+    addNotification() {
+      db.collection("notifications").add({
+        student: "",
+        faculty: `${this.title} ${this.last}`,
+        display_name: this.displayName,
+        user: this.user
+      });
+    },
     google() {
       firebase.auth().signInWithPopup(provider);
     },
-    remove(id) {
+    removeAnnouncement(id) {
       db.collection("announcements")
         .doc(id)
         .delete();
     },
-    update(item) {
+    removeNotification(id) {
+      db.collection("notifications")
+        .doc(id)
+        .delete();
+    },
+    updateAnnouncement(item) {
       db.collection("announcements")
         .doc(item.id)
         .set({
           content: item.content,
           days: item.days,
+          display_name: this.displayName,
+          user: item.user
+        });
+    },
+    updateNotification(item) {
+      db.collection("notifications")
+        .doc(item.id)
+        .set({
+          student: item.student,
+          faculty: item.faculty,
           display_name: this.displayName,
           user: item.user
         });
@@ -92,16 +130,46 @@ export default {
       if (user) {
         this.user = user.uid;
         this.displayName = user.displayName;
+        getStudents(this, 1);
+        const ref = db.collection("users").doc(user.uid);
+        ref.get().then(doc => {
+          const d = doc.data();
+          this.title = d.title;
+          this.last = d.last;
+        });
         db.collection("announcements").onSnapshot(snapshot => {
           this.announcements = [];
           snapshot.forEach(doc => {
             this.announcements.push({ id: doc.id, ...doc.data() });
           });
         });
+        db.collection("notifications").onSnapshot(snapshot => {
+          this.notifications = [];
+          snapshot.forEach(doc => {
+            this.notifications.push({ id: doc.id, ...doc.data() });
+          });
+        });
       }
     });
   }
 };
+
+function getStudents(context, index) {
+  fn({
+    product: "school",
+    url: "users",
+    params: {
+      roles: "62830",
+      marker: index
+    }
+  }).then(result => {
+    for (const s of result.data.value) {
+      let first = s.nick_name ? s.nick_name : s.first_name;
+      context.students.push(`${s.last_name}, ${first}`);
+    }
+    if (result.data.next_link) getStudents(context, index + 100);
+  });
+}
 </script>
 
 <style>
