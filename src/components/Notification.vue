@@ -1,13 +1,12 @@
 <template>
   <div class="item">
     <div>
-      <div
-        class="student"
-        ref="student"
-        :contenteditable="owner"
-        @blur="updateStudent"
-        @keyup="getMatches"
-      >{{item.student}}</div>
+      <Student
+        :owner="owner"
+        :student="item.student"
+        @matches="getMatches"
+        @update="updateStudent"
+      />
       <Matches :matches="matches" @selection="selectedMatch" />
     </div>
     <div>to see {{item.faculty}}</div>
@@ -20,10 +19,12 @@
 
 <script>
 import Matches from "@/components/Matches";
+import Student from "@/components/Student";
 
 export default {
   components: {
-    Matches
+    Matches,
+    Student
   },
   computed: {
     owner() {
@@ -39,24 +40,15 @@ export default {
     remove() {
       this.$emit("removeItem", this.item.id);
     },
-    getMatches() {
-      this.matches = [];
-      if (this.$refs.student.innerText.length > 1) {
-        this.matches = this.students.filter(s =>
-          s.includes(this.$refs.student.innerText)
-        );
-      }
+    getMatches(student) {
+      this.matches = this.students.filter(s => s.includes(student));
     },
     selectedMatch(student) {
-      this.$refs.student.innerText = student;
+      this.item.student = student;
       this.updateStudent();
     },
     updateStudent() {
-      // Hack fix to updating content
-      this.item.student = this.$refs.student.innerText;
       this.$emit("updateItem", this.item);
-      // Hack fix to content doubling
-      this.$refs.student.innerText = this.item.student;
       this.matches = [];
     }
   },
@@ -78,11 +70,6 @@ export default {
     item: {
       handler: function() {},
       deep: true
-    }
-  },
-  mounted() {
-    if (this.item.student === "") {
-      this.$refs.student.focus();
     }
   }
 };
@@ -111,15 +98,6 @@ export default {
 }
 .remove:hover {
   cursor: pointer;
-}
-.student {
-  font-size: 1.3em;
-  outline: 0;
-  padding: 1vw;
-}
-.student:focus {
-  background: #fefdf9;
-  border-radius: 1vw;
 }
 .user {
   display: block;
