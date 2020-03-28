@@ -127,7 +127,10 @@ export default {
   },
   mounted() {
     firebase.auth().onAuthStateChanged(user => {
-      if (user) {
+      if (
+        user &&
+        user.email.substring(user.email.length - 21) === "covenantchristian.org"
+      ) {
         this.user = user.uid;
         this.displayName = user.displayName;
         getStudents(this, 1);

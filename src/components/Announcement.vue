@@ -5,12 +5,7 @@
       <span class="days">{{item.days}} {{days}}</span>
       <span v-if="owner" class="plus" @click="plus">+</span>
     </div>
-    <div
-      class="content"
-      ref="content"
-      :contenteditable="owner"
-      @blur="updateContent"
-    >{{item.content}}</div>
+    <Message :message="item.content" :owner="owner" @update="updateContent" />
     <div>
       <span v-if="owner" class="remove" @click="remove">X</span>
       <span class="user">{{item.display_name}}</span>
@@ -19,7 +14,12 @@
 </template>
 
 <script>
+import Message from "@/components/Message";
+
 export default {
+  components: {
+    Message
+  },
   computed: {
     days() {
       return this.item.days === 1 ? "day" : "days";
@@ -44,12 +44,9 @@ export default {
     remove() {
       this.$emit("removeItem", this.item.id);
     },
-    updateContent() {
-      // Hack fix to updating content
-      this.item.content = this.$refs.content.innerText;
+    updateContent(content) {
+      this.item.content = content;
       this.$emit("updateItem", this.item);
-      // Hack fix to content doubling
-      this.$refs.content.innerText = this.item.content;
     }
   },
   props: {
@@ -77,15 +74,6 @@ export default {
 </script>
 
 <style scoped>
-.content {
-  font-size: 1.3em;
-  outline: 0;
-  padding: 1vw;
-}
-.content:focus {
-  background: #fefdf9;
-  border-radius: 1vw;
-}
 .days {
   display: inline-block;
   margin: 1vw;
