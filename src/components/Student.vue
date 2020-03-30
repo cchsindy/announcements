@@ -12,6 +12,7 @@
 export default {
   methods: {
     blur() {
+      // Hack fix for resetting text
       setTimeout(() => {
         this.$refs.student.innerText = this.student;
       }, 500);

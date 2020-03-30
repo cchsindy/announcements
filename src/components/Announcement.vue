@@ -64,11 +64,6 @@ export default {
       handler: function() {},
       deep: true
     }
-  },
-  mounted() {
-    if (this.item.content === "") {
-      this.$refs.content.focus();
-    }
   }
 };
 </script>

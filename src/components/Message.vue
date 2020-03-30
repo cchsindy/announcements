@@ -6,10 +6,11 @@
 export default {
   methods: {
     blur() {
-      // setTimeout(() => {
-      //   this.$refs.message.innerText = this.message;
-      // }, 500);
       this.$emit("update", this.$refs.message.innerText);
+      // Hack fix for resetting text
+      setTimeout(() => {
+        this.$refs.message.innerText = this.message;
+      }, 500);
     }
   },
   props: {
@@ -21,6 +22,11 @@ export default {
       type: Boolean,
       required: true
     }
+  },
+  mounted: function() {
+    this.$nextTick(function() {
+      if (this.message === "") this.$refs.message.focus();
+    });
   }
 };
 </script>
