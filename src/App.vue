@@ -50,7 +50,7 @@ const config = {
   projectId: "my-covenant",
   storageBucket: "my-covenant.appspot.com",
   messagingSenderId: "945207168321",
-  appId: "1:945207168321:web:e42d0845df84c8c24e65c0"
+  appId: "1:945207168321:web:e42d0845df84c8c24e65c0",
 };
 firebase.initializeApp(config);
 const provider = new firebase.auth.GoogleAuthProvider();
@@ -61,7 +61,7 @@ export default {
   name: "App",
   components: {
     Announcement,
-    Notification
+    Notification,
   },
   data: () => {
     return {
@@ -71,7 +71,7 @@ export default {
       user: null,
       displayName: "",
       title: "",
-      last: ""
+      last: "",
     };
   },
   methods: {
@@ -80,7 +80,7 @@ export default {
         content: "",
         days: 1,
         display_name: this.displayName,
-        user: this.user
+        user: this.user,
       });
     },
     addNotification() {
@@ -88,45 +88,37 @@ export default {
         student: "",
         faculty: `${this.title} ${this.last}`,
         display_name: this.displayName,
-        user: this.user
+        user: this.user,
       });
     },
     google() {
       firebase.auth().signInWithPopup(provider);
     },
     removeAnnouncement(id) {
-      db.collection("announcements")
-        .doc(id)
-        .delete();
+      db.collection("announcements").doc(id).delete();
     },
     removeNotification(id) {
-      db.collection("notifications")
-        .doc(id)
-        .delete();
+      db.collection("notifications").doc(id).delete();
     },
     updateAnnouncement(item) {
-      db.collection("announcements")
-        .doc(item.id)
-        .set({
-          content: item.content,
-          days: item.days,
-          display_name: this.displayName,
-          user: item.user
-        });
+      db.collection("announcements").doc(item.id).set({
+        content: item.content,
+        days: item.days,
+        display_name: this.displayName,
+        user: item.user,
+      });
     },
     updateNotification(item) {
-      db.collection("notifications")
-        .doc(item.id)
-        .set({
-          student: item.student,
-          faculty: item.faculty,
-          display_name: this.displayName,
-          user: item.user
-        });
-    }
+      db.collection("notifications").doc(item.id).set({
+        student: item.student,
+        faculty: item.faculty,
+        display_name: this.displayName,
+        user: item.user,
+      });
+    },
   },
   mounted() {
-    firebase.auth().onAuthStateChanged(user => {
+    firebase.auth().onAuthStateChanged((user) => {
       if (
         user &&
         user.email.substring(user.email.length - 21) === "covenantchristian.org"
@@ -135,26 +127,26 @@ export default {
         this.displayName = user.displayName;
         getStudents(this, 1);
         const ref = db.collection("users").doc(user.uid);
-        ref.get().then(doc => {
+        ref.get().then((doc) => {
           const d = doc.data();
           this.title = d.title;
           this.last = d.last;
         });
-        db.collection("announcements").onSnapshot(snapshot => {
+        db.collection("announcements").onSnapshot((snapshot) => {
           this.announcements = [];
-          snapshot.forEach(doc => {
+          snapshot.forEach((doc) => {
             this.announcements.push({ id: doc.id, ...doc.data() });
           });
         });
-        db.collection("notifications").onSnapshot(snapshot => {
+        db.collection("notifications").onSnapshot((snapshot) => {
           this.notifications = [];
-          snapshot.forEach(doc => {
+          snapshot.forEach((doc) => {
             this.notifications.push({ id: doc.id, ...doc.data() });
           });
         });
       }
     });
-  }
+  },
 };
 
 function getStudents(context, index) {
@@ -163,9 +155,9 @@ function getStudents(context, index) {
     url: "users",
     params: {
       roles: "62830",
-      marker: index
-    }
-  }).then(result => {
+      marker: index,
+    },
+  }).then((result) => {
     for (const s of result.data.value) {
       let first = s.nick_name ? s.nick_name : s.first_name;
       context.students.push(`${s.last_name}, ${first}`);
