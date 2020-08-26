@@ -24,16 +24,16 @@ import Student from "@/components/Student";
 export default {
   components: {
     Matches,
-    Student
+    Student,
   },
   computed: {
     owner() {
       return this.item.user === this.user;
-    }
+    },
   },
   data: () => {
     return {
-      matches: []
+      matches: [],
     };
   },
   methods: {
@@ -41,7 +41,9 @@ export default {
       this.$emit("removeItem", this.item.id);
     },
     getMatches(student) {
-      this.matches = this.students.filter(s => s.includes(student));
+      this.matches = this.students.filter((s) =>
+        s.toLowerCase().includes(student.toLowerCase())
+      );
     },
     selectedMatch(student) {
       this.item.student = student;
@@ -50,28 +52,28 @@ export default {
     updateStudent() {
       this.$emit("updateItem", this.item);
       this.matches = [];
-    }
+    },
   },
   props: {
     item: {
       type: Object,
-      required: true
+      required: true,
     },
     students: {
       type: Array,
-      required: true
+      required: true,
     },
     user: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   watch: {
     item: {
-      handler: function() {},
-      deep: true
-    }
-  }
+      handler: function () {},
+      deep: true,
+    },
+  },
 };
 </script>
 
