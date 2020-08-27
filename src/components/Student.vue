@@ -20,23 +20,23 @@ export default {
     keyUp() {
       if (this.$refs.student.innerText.length > 1)
         this.$emit("matches", this.$refs.student.innerText);
-    }
+    },
   },
   props: {
     owner: {
       type: Boolean,
-      required: true
+      required: true,
     },
     student: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
-  mounted: function() {
-    this.$nextTick(function() {
+  mounted: function () {
+    this.$nextTick(function () {
       if (this.student === "") this.$refs.student.focus();
     });
-  }
+  },
 };
 </script>
 
@@ -47,7 +47,7 @@ export default {
   padding: 1vw;
 }
 .student:focus {
-  background: #fefdf9;
+  background: #202020;
   border-radius: 1vw;
 }
 </style>

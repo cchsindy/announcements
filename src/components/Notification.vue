@@ -80,16 +80,17 @@ export default {
 <style scoped>
 .item {
   align-items: center;
-  background: #eeceab;
+  background: #333333;
   border: 1px solid #888888;
   border-radius: 1vw;
+  color: #ffffff;
   display: flex;
   justify-content: space-between;
   margin: 1vw;
   padding: 1vw;
 }
 .remove {
-  background: #c7a3a1;
+  background: #5c5c5c;
   border: 1px solid #888888;
   border-radius: 10px;
   display: inline-block;

@@ -7,6 +7,14 @@
     </div>
     <Message :message="item.content" :owner="owner" @update="updateContent" />
     <div>
+      <select v-model="item.category" @change="updateCategory">
+        <option value="general-academics">General/Academics</option>
+        <option value="athletics">Athletics</option>
+        <option value="community-clubs">Community/Clubs</option>
+        <option value="fine-arts">Fine Arts</option>
+      </select>
+    </div>
+    <div>
       <span v-if="owner" class="remove" @click="remove">X</span>
       <span class="user">{{item.display_name}}</span>
     </div>
@@ -18,7 +26,7 @@ import Message from "@/components/Message";
 
 export default {
   components: {
-    Message
+    Message,
   },
   computed: {
     days() {
@@ -26,7 +34,7 @@ export default {
     },
     owner() {
       return this.item.user === this.user;
-    }
+    },
   },
   methods: {
     minus() {
@@ -44,27 +52,30 @@ export default {
     remove() {
       this.$emit("removeItem", this.item.id);
     },
+    updateCategory() {
+      this.$emit("updateItem", this.item);
+    },
     updateContent(content) {
       this.item.content = content;
       this.$emit("updateItem", this.item);
-    }
+    },
   },
   props: {
     item: {
       type: Object,
-      required: true
+      required: true,
     },
     user: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   watch: {
     item: {
-      handler: function() {},
-      deep: true
-    }
-  }
+      handler: function () {},
+      deep: true,
+    },
+  },
 };
 </script>
 
@@ -77,9 +88,10 @@ export default {
 }
 .item {
   align-items: center;
-  background: #eeceab;
+  background: #333333;
   border: 1px solid #888888;
   border-radius: 1vw;
+  color: #ffffff;
   display: flex;
   justify-content: space-between;
   margin: 1vw;
@@ -87,7 +99,7 @@ export default {
 }
 .minus,
 .plus {
-  background: #b1d6e1;
+  background: #5c5c5c;
   border: 1px solid #888888;
   border-radius: 10px;
   display: inline-block;
@@ -97,7 +109,7 @@ export default {
   width: 26px;
 }
 .remove {
-  background: #c7a3a1;
+  background: #5c5c5c;
   border: 1px solid #888888;
   border-radius: 10px;
   display: inline-block;

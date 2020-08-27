@@ -11,23 +11,23 @@ export default {
       setTimeout(() => {
         this.$refs.message.innerText = this.message;
       }, 500);
-    }
+    },
   },
   props: {
     message: {
       type: String,
-      required: true
+      required: true,
     },
     owner: {
       type: Boolean,
-      required: true
-    }
+      required: true,
+    },
   },
-  mounted: function() {
-    this.$nextTick(function() {
+  mounted: function () {
+    this.$nextTick(function () {
       if (this.message === "") this.$refs.message.focus();
     });
-  }
+  },
 };
 </script>
 
@@ -38,7 +38,7 @@ export default {
   padding: 1vw;
 }
 .message:focus {
-  background: #fefdf9;
+  background: #202020;
   border-radius: 1vw;
 }
 </style>

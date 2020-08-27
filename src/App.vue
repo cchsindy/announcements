@@ -77,6 +77,7 @@ export default {
   methods: {
     addAnnouncement() {
       db.collection("announcements").add({
+        category: "general-academics",
         content: "",
         days: 1,
         display_name: this.displayName,
@@ -102,6 +103,7 @@ export default {
     },
     updateAnnouncement(item) {
       db.collection("announcements").doc(item.id).set({
+        category: item.category,
         content: item.content,
         days: item.days,
         display_name: this.displayName,
@@ -168,19 +170,19 @@ function getStudents(context, index) {
 </script>
 
 <style>
-@import url("https://fonts.googleapis.com/css?family=Arvo|Oswald&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Work+Sans:wght@200&display=swap");
 
 body {
-  background: #b5c2ab;
+  background: #929292;
+  font-family: "Work Sans", sans-serif;
   margin: 0;
   padding: 0 0 4vh 0;
 }
 
 button {
-  background: #b1d6e1;
-  border: 1px solid #888888;
+  background: #bdbdbd;
+  border: 2px solid #646464;
   border-radius: 1vw;
-  font-family: Oswald, sans-serif;
   font-size: 1.5em;
   outline: 0;
   padding: 4px 12px;
@@ -192,16 +194,21 @@ button:hover {
 }
 
 h1 {
-  font-family: Oswald, sans-serif;
   text-transform: uppercase;
 }
 
+select {
+  background: #878787;
+  border: 1px sold #636363;
+  border-radius: 1vw;
+  padding: 1vh;
+}
+
 #app {
-  font-family: Arvo, serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: #1f1f1f;
 }
 
 .announcements {

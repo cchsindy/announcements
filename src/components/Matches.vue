@@ -9,20 +9,20 @@ export default {
   methods: {
     chooseMatch(e) {
       this.$emit("selection", e.target.innerText);
-    }
+    },
   },
   props: {
     matches: {
       type: Array,
-      required: true
-    }
-  }
+      required: true,
+    },
+  },
 };
 </script>
 
 <style scoped>
 .match {
-  background: #b1d6e1;
+  background: #686868;
   border: 1px dashed #888888;
   border-radius: 4px;
   margin: 4px;
