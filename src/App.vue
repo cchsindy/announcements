@@ -81,6 +81,7 @@ export default {
         content: "",
         days: 1,
         display_name: this.displayName,
+        hidden: false,
         user: this.user,
       });
     },
@@ -107,6 +108,7 @@ export default {
         content: item.content,
         days: item.days,
         display_name: this.displayName,
+        hidden: item.hidden,
         user: item.user,
       });
     },
@@ -134,12 +136,14 @@ export default {
           this.title = d.title;
           this.last = d.last;
         });
-        db.collection("announcements").onSnapshot((snapshot) => {
-          this.announcements = [];
-          snapshot.forEach((doc) => {
-            this.announcements.push({ id: doc.id, ...doc.data() });
+        db.collection("announcements")
+          .where("hidden", "==", false)
+          .onSnapshot((snapshot) => {
+            this.announcements = [];
+            snapshot.forEach((doc) => {
+              this.announcements.push({ id: doc.id, ...doc.data() });
+            });
           });
-        });
         db.collection("notifications").onSnapshot((snapshot) => {
           this.notifications = [];
           snapshot.forEach((doc) => {
