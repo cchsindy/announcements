@@ -208,6 +208,10 @@ select {
   padding: 1vh;
 }
 
+select:disabled {
+  background: none;
+}
+
 #app {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

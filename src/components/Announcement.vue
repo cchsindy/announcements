@@ -7,7 +7,7 @@
     </div>
     <Message :message="item.content" :owner="owner" @update="updateContent" />
     <div>
-      <select v-model="item.category" @change="updateCategory">
+      <select v-model="item.category" @change="updateCategory" :disabled="!owner">
         <option value="general-academics">General/Academics</option>
         <option value="athletics">Athletics</option>
         <option value="community-clubs">Community/Clubs</option>
