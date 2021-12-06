@@ -36,29 +36,29 @@
 </template>
 
 <script>
-import Announcement from "@/components/Announcement";
-import Notification from "@/components/Notification";
-import * as firebase from "firebase/app";
-import "firebase/auth";
-import "firebase/firestore";
-import "firebase/functions";
+import Announcement from '@/components/Announcement'
+import Notification from '@/components/Notification'
+import * as firebase from 'firebase/app'
+import 'firebase/auth'
+import 'firebase/firestore'
+import 'firebase/functions'
 
 const config = {
-  apiKey: "AIzaSyCg_FVHdzP3kvRAyrnpE2bJUsQfMRUgFW4",
-  authDomain: "my-covenant.firebaseapp.com",
-  databaseURL: "https://my-covenant.firebaseio.com",
-  projectId: "my-covenant",
-  storageBucket: "my-covenant.appspot.com",
-  messagingSenderId: "945207168321",
-  appId: "1:945207168321:web:e42d0845df84c8c24e65c0",
-};
-firebase.initializeApp(config);
-const provider = new firebase.auth.GoogleAuthProvider();
-const db = firebase.firestore();
-const fn = firebase.functions().httpsCallable("skyapi");
+  apiKey: 'AIzaSyCg_FVHdzP3kvRAyrnpE2bJUsQfMRUgFW4',
+  authDomain: 'my-covenant.firebaseapp.com',
+  databaseURL: 'https://my-covenant.firebaseio.com',
+  projectId: 'my-covenant',
+  storageBucket: 'my-covenant.appspot.com',
+  messagingSenderId: '945207168321',
+  appId: '1:945207168321:web:e42d0845df84c8c24e65c0',
+}
+firebase.initializeApp(config)
+const provider = new firebase.auth.GoogleAuthProvider()
+const db = firebase.firestore()
+const fn = firebase.functions().httpsCallable('skyapi')
 
 export default {
-  name: "App",
+  name: 'App',
   components: {
     Announcement,
     Notification,
@@ -69,116 +69,124 @@ export default {
       notifications: [],
       students: [],
       user: null,
-      displayName: "",
-      title: "",
-      last: "",
-    };
+      displayName: '',
+      title: '',
+      last: '',
+    }
   },
   methods: {
     addAnnouncement() {
-      db.collection("announcements").add({
-        category: "general-academics",
-        content: "",
+      db.collection('announcements').add({
+        category: 'general-academics',
+        content: '',
         days: 1,
         display_name: this.displayName,
         hidden: false,
         user: this.user,
-      });
+      })
     },
     addNotification() {
-      db.collection("notifications").add({
-        student: "",
+      db.collection('notifications').add({
+        student: '',
         faculty: `${this.title} ${this.last}`,
         display_name: this.displayName,
         user: this.user,
-      });
+      })
     },
     google() {
-      firebase.auth().signInWithPopup(provider);
+      firebase.auth().signInWithPopup(provider)
     },
     removeAnnouncement(id) {
-      db.collection("announcements").doc(id).delete();
+      db.collection('announcements')
+        .doc(id)
+        .delete()
     },
     removeNotification(id) {
-      db.collection("notifications").doc(id).delete();
+      db.collection('notifications')
+        .doc(id)
+        .delete()
     },
     updateAnnouncement(item) {
-      db.collection("announcements").doc(item.id).set({
-        category: item.category,
-        content: item.content,
-        days: item.days,
-        display_name: this.displayName,
-        hidden: item.hidden,
-        user: item.user,
-      });
+      db.collection('announcements')
+        .doc(item.id)
+        .set({
+          category: item.category,
+          content: item.content,
+          days: item.days,
+          display_name: this.displayName,
+          hidden: item.hidden,
+          user: item.user,
+        })
     },
     updateNotification(item) {
-      db.collection("notifications").doc(item.id).set({
-        student: item.student,
-        faculty: item.faculty,
-        display_name: this.displayName,
-        user: item.user,
-      });
+      db.collection('notifications')
+        .doc(item.id)
+        .set({
+          student: item.student,
+          faculty: item.faculty,
+          display_name: this.displayName,
+          user: item.user,
+        })
     },
   },
   mounted() {
     firebase.auth().onAuthStateChanged((user) => {
       if (
         user &&
-        user.email.substring(user.email.length - 21) === "covenantchristian.org"
+        user.email.substring(user.email.length - 21) === 'covenantchristian.org'
       ) {
-        this.user = user.uid;
-        this.displayName = user.displayName;
-        getStudents(this, 1);
-        const ref = db.collection("users").doc(user.uid);
+        this.user = user.uid
+        this.displayName = user.displayName
+        getStudents(this, 1)
+        const ref = db.collection('users').doc(user.uid)
         ref.get().then((doc) => {
-          const d = doc.data();
-          this.title = d.title;
-          this.last = d.last;
-        });
-        db.collection("announcements")
-          .where("hidden", "==", false)
+          const d = doc.data()
+          this.title = d.title
+          this.last = d.last
+        })
+        db.collection('announcements')
+          .where('hidden', '==', false)
           .onSnapshot((snapshot) => {
-            this.announcements = [];
+            this.announcements = []
             snapshot.forEach((doc) => {
-              this.announcements.push({ id: doc.id, ...doc.data() });
-            });
-          });
-        db.collection("notifications").onSnapshot((snapshot) => {
-          this.notifications = [];
+              this.announcements.push({ id: doc.id, ...doc.data() })
+            })
+          })
+        db.collection('notifications').onSnapshot((snapshot) => {
+          this.notifications = []
           snapshot.forEach((doc) => {
-            this.notifications.push({ id: doc.id, ...doc.data() });
-          });
-        });
+            this.notifications.push({ id: doc.id, ...doc.data() })
+          })
+        })
       }
-    });
+    })
   },
-};
+}
 
 function getStudents(context, index) {
   fn({
-    product: "school",
-    url: "users",
+    product: 'school',
+    url: 'users',
     params: {
-      roles: "62830",
+      roles: '62830',
       marker: index,
     },
   }).then((result) => {
     for (const s of result.data.value) {
-      let first = s.nick_name ? s.nick_name : s.first_name;
-      context.students.push(`${s.last_name}, ${first}`);
+      let first = s.preferred_name ? s.preferred_name : s.first_name
+      context.students.push(`${s.last_name}, ${first}`)
     }
-    if (result.data.next_link) getStudents(context, index + 100);
-  });
+    if (result.data.next_link) getStudents(context, index + 100)
+  })
 }
 </script>
 
 <style>
-@import url("https://fonts.googleapis.com/css2?family=Work+Sans:wght@200&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@200&display=swap');
 
 body {
   background: #929292;
-  font-family: "Work Sans", sans-serif;
+  font-family: 'Work Sans', sans-serif;
   margin: 0;
   padding: 0 0 4vh 0;
 }
